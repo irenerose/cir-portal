@@ -36,7 +36,7 @@ class User(AbstractBaseUser):
     first_name = models.CharField(_('First Name'), max_length=32, blank=True, null=True,
                                   validators=[RegexValidator(regex='^[A-Za-z]*$')])
     last_name = models.CharField(_('Last Name'), max_length=32, blank=True, null=True,
-                                    validators=[RegexValidator(regex='^[A-Za-z]*$')])
+                                 validators=[RegexValidator(regex='^[A-Za-z]*$')])
     email = models.EmailField(_('Email'), db_index=True, unique=True)
     username = models.CharField(_('username'), max_length=32, blank=False, unique=True)
     is_active = models.BooleanField(default=True)
@@ -80,25 +80,87 @@ class StudentManager(models.Manager):
 
         # do something with the book
         return student
-
 COURSES = (('cse', _('CSE')), ('me', _('ME')), ('ece', _('ECE')), ('eee', _('EEE')))
+
 class Student(models.Model):
     aums_id = models.CharField(_('Aums ID'),  max_length=32, blank=False, unique=True, primary_key=True)
     name = models.CharField(_('First Name'), max_length=32, blank=True, null=True)
     curr_course = models.CharField(_('Current Course'), max_length=32, blank=True, null=True,
-                                  validators=[RegexValidator(regex='^[A-Za-z]*$')])
-    branch = models.CharField(_('Branch'), max_length=32, choices=COURSES, blank=True, null=True,
-                                  validators=[RegexValidator(regex='^[A-Za-z]*$')])
-    tenth_mark = models.FloatField(_('10th Mark'), blank=True, null=True)
-    twelth_mark = models.FloatField(_('12th Mark'), blank=True, null=True)
+                                   validators=[RegexValidator(regex='^[A-Za-z]*$')])
+    branch = models.CharField(_('Branch'), max_length=32,choices= COURSES, blank=True, null=True,
+                              validators=[RegexValidator(regex='^[A-Za-z]*$')])
+    tenth_mark = models.CharField(_('10th Mark'),max_length=5, blank=True, null=True)
+    twelth_mark = models.CharField(_('12th Mark'),max_length=5, blank=True, null=True)
     s1 = models.FloatField(_('S1 Mark'), blank=True, null=True)
-    s2 = models.FloatField(_('S2 Mark'), blank=True, null=True)
-    s3 = models.FloatField(_('S3 Mark'), blank=True, null=True)
-    s4 = models.FloatField(_('S4 Mark'), blank=True, null=True)
-    s5 = models.FloatField(_('S5 Mark'), blank=True, null=True)
-    s6 = models.FloatField(_('S6 Mark'), blank=True, null=True)
-    cgpa = models.FloatField(_('CGPA'),blank=True, null=True)
-    curr_arrears = models.FloatField(_('No of current arrears'), blank=True, null=True)
-    hist_arrears = models.FloatField(_('No of history arrears'), blank=True, null=True)
+    s2 = models.FloatField(_('S2 Mark'),  blank=True, null=True)
+    s3 = models.FloatField(_('S3 Mark'),  blank=True, null=True)
+    s4 = models.FloatField(_('S4 Mark'),  blank=True, null=True)
+    s5 = models.FloatField(_('S5 Mark'),  blank=True, null=True)
+    s6 = models.FloatField(_('S6 Mark'),  blank=True, null=True)
+    cgpa = models.FloatField(_('CGPA'),   blank=True, null=True)
+    curr_arrears = models.IntegerField(_('No of current arrears'), blank=True, null=True)
+    hist_arrears = models.IntegerField(_('No of history arrears'), blank=True, null=True)
 
     Objects = StudentManager()
+
+
+TYPES = (('Technical', _('Technical')), ('HR', _('HR')), ('Quantitative', _('Quantitative')),
+         ('Verbals', _('Verbals')),
+         ('Reasoning', _('Reasoning')),
+         ('Eligibility', _('Eligibility')),
+         ('Aptitude', _('Aptitude'))
+         )
+
+class TestManager(models.Manager):
+    pass
+
+
+class Test(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(_('Test Name'), max_length=25, unique=False)
+    date = models.DateField(_('Test Date'), null=False)
+    type = models.CharField(_('Test Type'), max_length=20,
+                            choices=TYPES, blank=False, unique=False)
+
+    Objects = TestManager()
+
+class TechTest(models.Model):
+    test= models.ForeignKey(Test, null=False, blank=False)
+    student=models.ForeignKey(Student, null=False, blank=False)
+    marks=models.FloatField(_('Mark'), blank=True, null=False)
+
+class HRTest(models.Model):
+    test= models.ForeignKey(Test, null=False, blank=False)
+    student=models.ForeignKey(Student, null=False, blank=False)
+    marks=models.FloatField(_('Mark'), blank=True, null=False)
+
+class QuantitativeTest(models.Model):
+    test= models.ForeignKey(Test, null=False, blank=False)
+    student=models.ForeignKey(Student, null=False, blank=False)
+    marks=models.FloatField(_('Mark'), blank=True, null=False)
+
+class VerbalsTest(models.Model):
+    test= models.ForeignKey(Test, null=False, blank=False)
+    student=models.ForeignKey(Student, null=False, blank=False)
+    marks=models.FloatField(_('Mark'), blank=True, null=False)
+
+
+class ReasoningTest(models.Model):
+    test= models.ForeignKey(Test, null=False, blank=False)
+    student=models.ForeignKey(Student, null=False, blank=False)
+    marks=models.FloatField(_('Mark'), blank=True, null=False)
+
+
+class AptitudeTest(models.Model):
+    test = models.ForeignKey(Test, null=False, blank=False)
+    student = models.ForeignKey(Student, null=False, blank=False)
+    marks = models.FloatField(_('Mark'), blank=True, null=False)
+
+class EligibilityTest(models.Model):
+    test = models.ForeignKey(Test, null=False, blank=False)
+    student = models.ForeignKey(Student, null=False, blank=False)
+    marks = models.FloatField(_('Mark'), blank=True, null=False)
+
+
+
+
